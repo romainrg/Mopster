@@ -5,9 +5,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug. Please check the [existing issues](https://github.com/romainrg/mopster/issues) first.
+        Thanks for taking the time to report a bug. Please check the [existing issues](https://github.com/romainrg/Mopster/issues) first.
         **Did Mopster move something it should not have?** Say so in the report: that is the most important kind of bug.
-        **Security problem?** Do not open a public issue: follow the [security policy](https://github.com/romainrg/mopster/security/policy).
+        **Security problem?** Do not open a public issue: follow the [security policy](https://github.com/romainrg/Mopster/security/policy).
   - type: textarea
     id: what-happened
     attributes:

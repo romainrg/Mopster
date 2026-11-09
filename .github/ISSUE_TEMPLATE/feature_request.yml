@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for the idea. Please check the [roadmap](https://github.com/romainrg/mopster#roadmap) and the [existing issues](https://github.com/romainrg/mopster/issues) first.
+        Thanks for the idea. Please check the [roadmap](https://github.com/romainrg/Mopster#roadmap) and the [existing issues](https://github.com/romainrg/Mopster/issues) first.
         New cleanup rules have their own template: use *Cleanup rule*.
   - type: textarea
     id: problem

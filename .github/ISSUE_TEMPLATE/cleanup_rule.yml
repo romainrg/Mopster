@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Cleanup rules are declarative entries in `JunkCatalog`. A rule is only accepted when the data it targets is rebuilt by the app that owns it, so please give evidence. See "Add a cleanup rule" in [AGENTS.md](https://github.com/romainrg/mopster/blob/main/AGENTS.md).
+        Cleanup rules are declarative entries in `JunkCatalog`. A rule is only accepted when the data it targets is rebuilt by the app that owns it, so please give evidence. See "Add a cleanup rule" in [AGENTS.md](https://github.com/romainrg/Mopster/blob/main/AGENTS.md).
   - type: input
     id: rule-id
     attributes:

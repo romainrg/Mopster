@@ -18,8 +18,8 @@ By taking part, you agree to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 Requirements: macOS 14 or later, Xcode 16 or later and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
 
 ```sh
-git clone https://github.com/<your-account>/mopster.git
-cd mopster
+git clone https://github.com/<your-account>/Mopster.git
+cd Mopster
 make build      # generates Mopster.xcodeproj from project.yml, then builds
 make run        # opens the app
 ```

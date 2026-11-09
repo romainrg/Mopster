@@ -4,11 +4,11 @@ Mopster moves files to the Trash and runs a few system commands, so security and
 
 ## Supported versions
 
-Only the [latest release](https://github.com/romainrg/mopster/releases/latest) receives security fixes.
+Only the [latest release](https://github.com/romainrg/Mopster/releases/latest) receives security fixes.
 
 ## Reporting a vulnerability
 
-**Please do not open a public issue.** Report the problem privately through GitHub: [report a vulnerability](https://github.com/romainrg/mopster/security/advisories/new) (Security tab > Advisories).
+**Please do not open a public issue.** Report the problem privately through GitHub: [report a vulnerability](https://github.com/romainrg/Mopster/security/advisories/new) (Security tab > Advisories).
 
 Please include:
 

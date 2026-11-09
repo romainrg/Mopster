@@ -18,7 +18,7 @@ public struct URLSessionHTTPClient: HTTPClient {
         configuration.waitsForConnectivity = false
         session = URLSession(configuration: configuration)
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1"
-        userAgent = "Mopster/\(version) (+https://github.com/romainrg/mopster)"
+        userAgent = "Mopster/\(version) (+https://github.com/romainrg/Mopster)"
     }
 
     public func get(_ url: URL, timeout: TimeInterval) async throws -> Data {

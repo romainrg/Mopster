@@ -60,7 +60,7 @@ representative at an online or offline event.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported privately to the community leaders responsible for enforcement, through
-GitHub: <https://github.com/romainrg/mopster/security/advisories/new>
+GitHub: <https://github.com/romainrg/Mopster/security/advisories/new>
 (choose a private report and describe it as a conduct issue).
 All complaints will be reviewed and investigated promptly and fairly.
 

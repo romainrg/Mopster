@@ -10,12 +10,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/romainrg/mopster/releases/latest"><img src="https://img.shields.io/github/v/release/romainrg/mopster?sort=semver&style=for-the-badge&logo=apple&logoColor=white&label=T%C3%A9l%C3%A9charger&color=0A84FF" alt="Télécharger Mopster pour macOS"></a><br>
+  <a href="https://github.com/romainrg/Mopster/releases/latest"><img src="https://img.shields.io/github/v/release/romainrg/Mopster?sort=semver&style=for-the-badge&logo=apple&logoColor=white&label=T%C3%A9l%C3%A9charger&color=0A84FF" alt="Télécharger Mopster pour macOS"></a><br>
   <sub>Gratuit et open source · macOS 14 ou ultérieur · Apple silicon et Intel</sub>
 </p>
 
 <p align="center">
-  <a href="https://github.com/romainrg/mopster/actions/workflows/ci.yml"><img src="https://github.com/romainrg/mopster/actions/workflows/ci.yml/badge.svg" alt="État de la CI"></a>
+  <a href="https://github.com/romainrg/Mopster/actions/workflows/ci.yml"><img src="https://github.com/romainrg/Mopster/actions/workflows/ci.yml/badge.svg" alt="État de la CI"></a>
   <img src="https://img.shields.io/badge/macOS-14%2B-blue" alt="Nécessite macOS 14 ou ultérieur">
   <a href="LICENSE"><img src="https://img.shields.io/badge/licence-MIT-green" alt="Licence MIT"></a>
 </p>
@@ -32,7 +32,7 @@ Mopster est une application de maintenance pour Mac dans l'esprit de CleanMyMac,
 Tout ce que Mopster supprime va à la Corbeille, après un contrôle de sécurité, et uniquement ce que vous avez sélectionné.
 
 > [!NOTE]
-> Mopster est jeune. Il a été testé à la main sur **Apple Silicon avec macOS 27.0.1** uniquement, compilé avec Xcode 16.2. Il est construit en binaire universel, mais la version Intel n'a pas été essayée à la main. Les retours d'autres Mac et d'autres versions de macOS sont les bienvenus : [ouvrez un ticket](https://github.com/romainrg/mopster/issues/new/choose).
+> Mopster est jeune. Il a été testé à la main sur **Apple Silicon avec macOS 27.0.1** uniquement, compilé avec Xcode 16.2. Il est construit en binaire universel, mais la version Intel n'a pas été essayée à la main. Les retours d'autres Mac et d'autres versions de macOS sont les bienvenus : [ouvrez un ticket](https://github.com/romainrg/Mopster/issues/new/choose).
 
 ## Fonctionnalités
 
@@ -124,7 +124,7 @@ Mopster est natif (Swift, SwiftUI), n'a aucune dépendance tierce et ne fait auc
 
 ## Installation
 
-Téléchargez les fichiers depuis la [dernière version](https://github.com/romainrg/mopster/releases/latest). Choisissez l'un des deux installeurs :
+Téléchargez les fichiers depuis la [dernière version](https://github.com/romainrg/Mopster/releases/latest). Choisissez l'un des deux installeurs :
 
 - **DMG** : ouvrez `Mopster-<version>.dmg` et glissez **Mopster** dans le dossier **Applications**.
 - **PKG** : double-cliquez sur `Mopster-<version>.pkg` et suivez l'installeur. Il installe toujours dans `/Applications`.
@@ -197,8 +197,8 @@ Prérequis : macOS 14 ou ultérieur, Xcode 16 ou ultérieur et [XcodeGen](https:
 
 ```sh
 brew install xcodegen
-git clone https://github.com/romainrg/mopster.git
-cd mopster
+git clone https://github.com/romainrg/Mopster.git
+cd Mopster
 make run
 ```
 
@@ -231,7 +231,7 @@ Une faille de sécurité ? Signalez-la en privé, comme décrit dans [SECURITY.m
 - Nettoyage de confidentialité (historique et cookies des navigateurs), gestionnaire d'extensions, détecteur de photos similaires, mises à jour Homebrew.
 - Allègement des instantanés Time Machine, avec une conception « lister puis confirmer ».
 
-Idées et retours bienvenus dans les [tickets](https://github.com/romainrg/mopster/issues).
+Idées et retours bienvenus dans les [tickets](https://github.com/romainrg/Mopster/issues).
 
 ## Licence
 

@@ -1,0 +1,108 @@
+name: Mopster
+options:
+  bundleIdPrefix: io.github.romainrg
+  deploymentTarget:
+    macOS: "14.0"
+  developmentLanguage: en
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+configs:
+  Debug: debug
+  Release: release
+
+settings:
+  base:
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    ENABLE_HARDENED_RUNTIME: YES
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    DEVELOPMENT_TEAM: ""
+    DEAD_CODE_STRIPPING: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    SWIFT_EMIT_LOC_STRINGS: YES
+  configs:
+    Release:
+      ONLY_ACTIVE_ARCH: NO
+
+packages:
+  MopsterCore:
+    path: MopsterCore
+
+targets:
+  Mopster:
+    type: application
+    platform: macOS
+    sources:
+      - path: Mopster
+    dependencies:
+      - package: MopsterCore
+        product: MopsterCore
+    info:
+      path: Mopster/Resources/Info.plist
+      properties:
+        CFBundleDisplayName: Mopster
+        CFBundleDevelopmentRegion: en
+        CFBundleLocalizations: [en, fr]
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSApplicationCategoryType: public.app-category.utilities
+        NSHumanReadableCopyright: "© 2026 Romain Gallien. MIT License."
+        NSAppleEventsUsageDescription: "Mopster asks Finder to move items that need an administrator password to the Trash."
+    entitlements:
+      path: Mopster/Resources/Mopster.entitlements
+      properties:
+        com.apple.security.automation.apple-events: true
+    settings:
+      base:
+        PRODUCT_NAME: Mopster
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.romainrg.Mopster
+        CODE_SIGN_ENTITLEMENTS: Mopster/Resources/Mopster.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+        COMBINE_HIDPI_IMAGES: YES
+
+  # Development tool: renders the app views offscreen to PNG (scripts/screenshots.sh). Never distributed.
+  MopsterScreenshots:
+    type: application
+    platform: macOS
+    sources:
+      - path: Mopster
+        excludes:
+          - App/MopsterApp.swift
+          - Resources/Info.plist
+          - Resources/*.entitlements
+      - path: Tools/Screenshots
+    dependencies:
+      - package: MopsterCore
+        product: MopsterCore
+    settings:
+      base:
+        PRODUCT_NAME: MopsterScreenshots
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.romainrg.Mopster.Screenshots
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_LSUIElement: YES
+        ENABLE_HARDENED_RUNTIME: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+schemes:
+  Mopster:
+    build:
+      targets:
+        Mopster: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - package: MopsterCore/MopsterCoreTests
+    archive:
+      config: Release
+  MopsterScreenshots:
+    build:
+      targets:
+        MopsterScreenshots: all
+    run:
+      config: Debug

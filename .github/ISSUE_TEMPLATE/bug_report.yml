@@ -1,0 +1,74 @@
+name: Bug report
+description: Something does not work as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please check the [existing issues](https://github.com/romainrg/mopster/issues) first.
+        **Did Mopster move something it should not have?** Say so in the report: that is the most important kind of bug.
+        **Security problem?** Do not open a public issue: follow the [security policy](https://github.com/romainrg/mopster/security/policy).
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Mopster, go to System Junk
+        2. Click Scan
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: module
+    attributes:
+      label: Which part of Mopster?
+      options:
+        - Smart Sweep
+        - System Junk
+        - Protection
+        - Optimization
+        - Maintenance
+        - Uninstaller
+        - Updater
+        - Telescope
+        - Large & Old Files
+        - Duplicates
+        - Settings or onboarding
+        - Installer (DMG or PKG)
+        - Other
+  - type: input
+    id: version
+    attributes:
+      label: Mopster version
+      description: Shown in Finder > Get Info on Mopster.app, or the release you downloaded.
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Mac
+      description: Mopster was tested by hand on Apple Silicon with macOS 27 only, so reports from other setups are especially useful.
+      placeholder: macOS 15.1, MacBook Air M2 (or an Intel Mac)
+    validations:
+      required: true
+  - type: dropdown
+    id: fda
+    attributes:
+      label: Full Disk Access
+      options:
+        - Granted
+        - Not granted
+        - Not sure
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots or output
+      description: Check for anything private (file names, paths) before posting. `make demo` shows the app with sample data if you want to reproduce without personal files.

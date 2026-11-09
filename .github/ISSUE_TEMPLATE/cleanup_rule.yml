@@ -1,0 +1,57 @@
+name: Cleanup rule
+description: Propose a new System Junk rule.
+labels: ["cleanup-rule"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cleanup rules are declarative entries in `JunkCatalog`. A rule is only accepted when the data it targets is rebuilt by the app that owns it, so please give evidence. See "Add a cleanup rule" in [AGENTS.md](https://github.com/romainrg/mopster/blob/main/AGENTS.md).
+  - type: input
+    id: rule-id
+    attributes:
+      label: Rule id
+      description: A short camelCase identifier.
+      placeholder: jetbrainsCaches
+    validations:
+      required: true
+  - type: textarea
+    id: locations
+    attributes:
+      label: Locations
+      description: One path per line, starting with `~`. Simple `*` globs are supported.
+      placeholder: |
+        ~/Library/Caches/JetBrains/*
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: why-safe
+    attributes:
+      label: Why is it safe to remove?
+      description: What the data is, which app owns it, and what the user loses (if anything) when it is trashed.
+    validations:
+      required: true
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk
+      description: "Safe items are pre-selected. Review items are listed but left unselected."
+      options:
+        - safe
+        - review
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence that the app rebuilds it
+      description: Documentation link, or what you observed after deleting the data and relaunching the app (app and macOS versions).
+    validations:
+      required: true
+  - type: checkboxes
+    id: extra
+    attributes:
+      label: Also
+      options:
+        - label: The data needs Full Disk Access to be read.
+        - label: I can open a pull request for it.

@@ -38,14 +38,14 @@ make clean
   - `Processes/`: process sampler, system load, control policy.
   - `Apps/`: inventory, leftover finder, orphan detector.
   - `Updates/`: version comparison, App Store lookup, Sparkle appcast parser, `softwareupdate` parser.
-  - `Disk/`, `Files/`: size tree, treemap layout, large-file and duplicate finders.
-  - `Flow/`: `ScanFlow` (intro, scanning, results, done), selection, cleanup model.
+  - `Disk/`, `Files/`: size tree, treemap layout, volume capacity, large-file and duplicate finders.
+  - `Flow/`: `ScanFlow` (intro, scanning, results, done), selection, cleanup model, Smart Sweep's `HealthScore`.
   - `Support/`: `L(...)` localized strings, path patterns, disk usage, process runner.
 - `MopsterCore/Tests/MopsterCoreTests/`: XCTest suites on temporary directories; helpers in `TestSupport.swift`.
 - `Mopster/`: app target.
   - `App/`: `AppEnvironment` (live and demo services), `FeatureModels`, `ContentView`, sidebar.
   - `Features/<Module>/`: one folder per module, with its view and view model.
-  - `Shared/`: `FeatureScaffold`, `CleanupResultsView`, context menu, Quick Look, Finder trash, Full Disk Access.
+  - `Shared/`: `Theme` (ground, `ModuleTint` per module, `themeCard`/`themePanel`, `.gradient` and `.soft` buttons, `ModuleHeader`, `ModuleFooter`), `FeatureScaffold`, `CleanupResultsView`, context menu, Quick Look, Finder trash, Full Disk Access.
   - `Demo/`: sample data and demo implementations of every service.
   - `Onboarding/`, `Settings/`, `Resources/` (`Localizable.xcstrings`, assets).
 - `Tools/Screenshots/`: offscreen renderer for the README images (development only, never shipped); scenes in `Scenes.swift`.
@@ -91,7 +91,7 @@ Every feature follows the same steps. Look at an existing module such as Large &
 1. **Core scanner, protocol and tests.** In `MopsterCore`, write the logic behind a protocol (`FooScanning`) with a live implementation, and unit tests on temporary directories. Cover the hostile cases of the invariants (symlinks, unreadable folders, odd file names). Run `make core-test FILTER=FooTests`.
 2. **`AppEnvironment` factory.** Add the service as a property of `AppEnvironment`, set in both `live()` and `demo()`. Ignore-aware scanners are per-scan factories. Add the demo implementation in `Mopster/Demo/` using the sample data.
 3. **View model in `FeatureModels`.** Create `FooViewModel` in `Mopster/Features/Foo/`, add it to `FeatureModels`, and make it adopt scan results inside the `ScanFlow` scan closure.
-4. **View with shared components.** Build `FooView` on `FeatureScaffold`, `CleanupResultsView`, `ItemContextMenu` and the other `Shared/` views so the module gets the intro, scanning, results and done phases for free. Add a `SidebarSection` case and wire it in `ContentView`.
+4. **View with shared components.** Build `FooView` on `FeatureScaffold`, `CleanupResultsView`, `ItemContextMenu` and the other `Shared/` views so the module gets the intro, scanning, results and done phases for free. Use the theme: `ModuleHeader` on top, lists in `.themePanel()`, `ModuleFooter` with one `.gradient` primary action and `.soft` secondary ones. Add a `SidebarSection` case with its `ModuleTint` and wire it in `ContentView`.
 5. **Strings.** Add every new key with French to `Localizable.xcstrings`, then `make build && make check-strings`.
 6. **Screenshot scene.** Register a scene in `Tools/Screenshots/Scenes.swift` (built from demo data, for example `foo-results`), run `make screenshots`, **open the PNGs** and check them in light, dark and French (`scripts/screenshots.sh build/screenshots foo --language fr`). Fix anything truncated, overlapping or untranslated.
 7. **Wrap up.** Add the module to the README features (both languages), to `CHANGELOG.md` and to `docs/ARCHITECTURE.md`.

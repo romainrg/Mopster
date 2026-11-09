@@ -12,16 +12,15 @@ struct CleanupResultsView: View {
     var body: some View {
         VStack(spacing: 0) {
             CleanupList(groups: groups, selection: $selection, onIgnore: onIgnore, showsNotes: showsNotes)
-            Divider()
-            HStack {
+                .themePanel()
+            ModuleFooter {
                 Text("\(Formatting.bytes(selection.totalSize(in: groups))) selected")
                     .monospacedDigit()
-                Spacer()
+            } actions: {
                 Button("Move to Trash", action: onRemove)
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(.gradient)
                     .disabled(selection.urls(in: groups).isEmpty)
             }
-            .padding(12)
         }
     }
 }

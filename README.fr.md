@@ -36,7 +36,7 @@ Tout ce que Mopster supprime va à la Corbeille, après un contrôle de sécurit
 
 ## Fonctionnalités
 
-- **Entretien intelligent** : lance en une fois les analyses rapides de chaque module et affiche une carte par domaine (fichiers inutiles, protection, performances, mises à jour, gros fichiers anciens). La carte des fichiers inutiles affiche le nombre et la taille des fichiers inutiles sûrs. *Lancer* déplace exactement ces éléments présélectionnés à la Corbeille, après une confirmation qui montre le total ; *Examiner* ouvre Fichiers inutiles pour voir chaque élément. Chaque autre carte a un bouton *Examiner* qui ouvre son module.
+- **Entretien intelligent** : lance en une fois les analyses rapides de chaque module, les résume en un score de santé de 0 à 100 à côté de l'espace disque utilisé, de la pression mémoire et de la taille de la Corbeille, et affiche une carte par domaine (fichiers inutiles, protection, performances, mises à jour, gros fichiers anciens). La carte des fichiers inutiles affiche le nombre et la taille des fichiers inutiles sûrs. *Lancer* déplace exactement ces éléments présélectionnés à la Corbeille, après une confirmation qui montre le total ; *Examiner* ouvre Fichiers inutiles pour voir chaque élément. Chaque autre carte a un bouton *Examiner* qui ouvre son module.
 - **Fichiers inutiles** : caches, journaux, rapports de plantage, caches Xcode et développeur, téléchargements de Mail, états d'applications enregistrés, installeurs oubliés dans Téléchargements, sauvegardes d'appareils. Les éléments sûrs sont présélectionnés, ceux qui demandent un coup d'œil ne le sont pas.
 - **Protection** : une liste de contrôle (protection de l'intégrité du système, Gatekeeper, FileVault, coupe-feu, XProtect, mises à jour de sécurité automatiques) avec un raccourci vers le bon volet de Réglages Système, et une inspection des agents et démons de lancement : signature du code, programmes manquants, emplacements inhabituels. Un signalement veut dire « jetez un œil », jamais « malware ».
 - **Optimisation** : principaux processus par CPU et mémoire, pression mémoire et charge CPU, Quitter et Forcer à quitter pour vos propres processus, et éléments d'arrière-plan que vous pouvez désactiver ou réactiver.
@@ -171,6 +171,7 @@ Les détails sont dans [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) (en anglais)
 ## Valeurs par défaut à connaître
 
 - La carte des gros fichiers anciens de l'Entretien intelligent compte les fichiers de **50 Mo ou plus qui n'ont pas été ouverts depuis un an ou plus**.
+- Le score de santé de l'Entretien intelligent part de 100 et chaque constat coûte quelques points, plafonnés par domaine : fichiers inutiles sûrs au-delà de 1 Go, réglages de sécurité désactivés, éléments d'arrière-plan signalés, pression mémoire, éléments d'arrière-plan cassés, mises à jour en attente et disque de démarrage rempli à plus de 80 %. Un domaine qui n'a pas pu être vérifié ne coûte rien ; à partir de 75, le Mac est en bon état.
 - « Dernière ouverture » repose sur les dates d'accès des fichiers. Les sauvegardes ou l'indexation peuvent les rafraîchir, donc Mopster peut sous-estimer les fichiers anciens.
 - L'allègement des instantanés locaux de Time Machine est volontairement absent : il supprime définitivement, hors de la Corbeille, et pourrait effacer votre seule sauvegarde récente.
 

@@ -4,6 +4,7 @@ import SwiftUI
 
 struct FeatureIntro: View {
     let symbol: String
+    var tint: ModuleTint = .sweep
     let title: LocalizedStringResource
     let promise: LocalizedStringResource
     let scope: LocalizedStringResource
@@ -12,15 +13,13 @@ struct FeatureIntro: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            Image(systemName: symbol)
-                .font(.system(size: 56))
-                .foregroundStyle(.tint)
+            ModuleIcon(symbol: symbol, tint: tint, size: 84)
+                .shadow(color: tint.end.opacity(0.35), radius: 18, y: 10)
             Text(title).font(.largeTitle.bold())
             Text(promise).font(.title3)
-            Text(scope).foregroundStyle(.secondary)
+            Text(scope).foregroundStyle(.secondary).frame(maxWidth: 520)
             Button(actionTitle, action: action)
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                .buttonStyle(.gradient)
                 .keyboardShortcut(.defaultAction)
                 .padding(.top, 8)
         }
@@ -32,15 +31,23 @@ struct FeatureIntro: View {
 
 struct FeatureScanning: View {
     let progress: ScanProgress
+    var tint: ModuleTint?
     let cancel: () -> Void
 
     var body: some View {
         VStack(spacing: 14) {
-            if let fraction = progress.fraction {
-                ProgressView(value: fraction).frame(maxWidth: 320)
-            } else {
-                ProgressView().controlSize(.large)
+            if let tint {
+                ModuleIcon(symbol: "magnifyingglass", tint: tint, size: 56)
+                    .shadow(color: tint.end.opacity(0.3), radius: 12, y: 6)
             }
+            Group {
+                if let fraction = progress.fraction {
+                    ProgressView(value: fraction).frame(maxWidth: 320)
+                } else {
+                    ProgressView().controlSize(.large)
+                }
+            }
+            .tint(tint?.end)
             Text("Scanning…").font(.title3)
             if let location = progress.location {
                 Text(location)
@@ -53,7 +60,7 @@ struct FeatureScanning: View {
             Text("\(progress.itemsFound) items found")
                 .foregroundStyle(.secondary)
                 .monospacedDigit()
-            Button("Cancel", action: cancel).keyboardShortcut(.cancelAction)
+            Button("Cancel", action: cancel).buttonStyle(.soft).keyboardShortcut(.cancelAction)
         }
         .padding(32)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -66,9 +73,8 @@ struct FeatureDone: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            Image(systemName: "trash.circle.fill")
-                .font(.system(size: 56))
-                .foregroundStyle(.tint)
+            ModuleIcon(symbol: "trash", tint: .junk, size: 72)
+                .shadow(color: ModuleTint.junk.end.opacity(0.35), radius: 16, y: 8)
             Text("Moved \(Formatting.bytes(report.trashedBytes)) to the Trash")
                 .font(.title2.bold())
             Text("The space is freed once you empty the Trash.")
@@ -96,12 +102,15 @@ struct FeatureDone: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .themeCard()
             .frame(maxWidth: 560)
             HStack {
                 Button("Open Trash") {
                     NSWorkspace.shared.open(FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".Trash"))
                 }
-                Button("Done", action: onDone).buttonStyle(.borderedProminent).keyboardShortcut(.defaultAction)
+                .buttonStyle(.soft)
+                Button("Done", action: onDone).buttonStyle(.gradient).keyboardShortcut(.defaultAction)
             }
         }
         .padding(32)
@@ -120,6 +129,24 @@ struct FeatureDone: View {
         case .alreadyGone: "Already gone"
         case .failed(let message): "Failed: \(message)"
         }
+    }
+}
+
+/// A scan that could not run: what went wrong and a way to try again.
+struct FeatureFailed: View {
+    let message: String
+    let retry: () -> Void
+
+    var body: some View {
+        VStack(spacing: 14) {
+            ModuleIcon(symbol: "exclamationmark.triangle", tint: .updater, size: 64)
+                .shadow(color: ModuleTint.updater.end.opacity(0.3), radius: 14, y: 6)
+            Text("The scan failed").font(.title2.bold())
+            Text(message).foregroundStyle(.secondary)
+            Button("Retry", action: retry).buttonStyle(.gradient)
+        }
+        .padding(32)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 

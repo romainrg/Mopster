@@ -4,6 +4,12 @@ All notable changes to Mopster are documented here. The format follows [Keep a C
 
 ## [Unreleased]
 
+### Changed
+
+- New look: a soft polychrome background, one gradient color per module, translucent cards and gradient primary buttons, in light and dark mode.
+- Smart Sweep opens on a health score from 0 to 100 with a one-line summary, next to the startup disk's used space, memory pressure and the Trash size.
+- The welcome sheet introduces the modules and explains Full Disk Access side by side.
+
 ## [0.1.0] - 2026-11-08
 
 ### Added

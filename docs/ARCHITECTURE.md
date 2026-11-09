@@ -16,7 +16,7 @@ This document explains how Mopster is built: its modules, how a feature is wired
 | Core | `MopsterCore/Sources/MopsterCore` | Safety guard, removal, rules, scanners, parsers, scan flow state machine |
 | App | `Mopster/App` | `AppEnvironment`, `FeatureModels`, window and sidebar |
 | Features | `Mopster/Features/<Module>` | One view and one view model per module |
-| Shared views | `Mopster/Shared` | `FeatureScaffold`, `CleanupResultsView`, context menu, Quick Look, Finder trash, Full Disk Access |
+| Shared views | `Mopster/Shared` | `Theme` (colors, module tints, cards, buttons, `ModuleHeader`, `ModuleFooter`), `FeatureScaffold`, `CleanupResultsView`, context menu, Quick Look, Finder trash, Full Disk Access |
 | Demo | `Mopster/Demo` | Sample data and demo implementations of every service |
 | Screenshots | `Tools/Screenshots` | Offscreen renderer for the README images; never shipped |
 
@@ -32,8 +32,8 @@ This document explains how Mopster is built: its modules, how a feature is wired
 | `Processes/` | Process sampler, system load, process control policy |
 | `Apps/` | App inventory, leftover finder, orphan detector |
 | `Updates/` | `AppVersion`, App Store lookup, appcast parser, `softwareupdate` parser, `UpdateChecker`, `HTTPClient` |
-| `Disk/`, `Files/` | `SizeTree` (BSD `fts`), `Treemap`, large-file and duplicate finders |
-| `Flow/` | `ScanFlow`, selection, cleanup model |
+| `Disk/`, `Files/` | `SizeTree` (BSD `fts`), `Treemap`, `VolumeCapacity`, large-file and duplicate finders |
+| `Flow/` | `ScanFlow`, selection, cleanup model, Smart Sweep's `HealthScore` |
 | `Support/` | `L(...)` localized strings, path patterns, disk usage, process runner |
 
 ## Scan flow

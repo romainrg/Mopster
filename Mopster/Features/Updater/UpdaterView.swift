@@ -8,39 +8,31 @@ struct UpdaterView: View {
         switch model.flow.phase {
         case .intro:
             FeatureIntro(
-                symbol: "arrow.down.app", title: "Updater",
+                symbol: "arrow.down.app", tint: .updater, title: "Updater",
                 promise: "Find out which apps and macOS have an update waiting.",
                 scope: "Asks the App Store and each app's own update feed. Mopster installs nothing.",
                 actionTitle: "Check for updates", action: model.check)
         case .scanning, .removing:
             VStack(spacing: 14) {
+                ModuleIcon(symbol: "arrow.down.app", tint: .updater, size: 56)
+                    .shadow(color: ModuleTint.updater.end.opacity(0.3), radius: 12, y: 6)
                 ProgressView().controlSize(.large)
                 Text("Checking for updates…").font(.title3)
-                Button("Cancel", action: model.flow.cancel).keyboardShortcut(.cancelAction)
+                Button("Cancel", action: model.flow.cancel).buttonStyle(.soft).keyboardShortcut(.cancelAction)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         case .results, .done:
             if let result = model.result { results(result) }
         case .failed(let message):
-            VStack(spacing: 14) {
-                Image(systemName: "exclamationmark.triangle").font(.system(size: 48)).foregroundStyle(.orange)
-                Text("The scan failed").font(.title2.bold())
-                Text(message).foregroundStyle(.secondary)
-                Button("Retry", action: model.check).buttonStyle(.borderedProminent)
-            }
-            .padding(32)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            FeatureFailed(message: message, retry: model.check)
         }
     }
 
     private func results(_ result: UpdateCheckResult) -> some View {
         VStack(spacing: 0) {
-            HStack {
-                summary(result)
-                Spacer()
+            ModuleHeader(.updater, subtitle: summary(result)) {
+                Button("Check again", action: model.check).buttonStyle(.soft)
             }
-            .padding([.horizontal, .top], 12)
-            .padding(.bottom, 8)
             List {
                 Section("macOS updates") { systemRows(result.system) }
                 Section("App updates") {
@@ -68,25 +60,19 @@ struct UpdaterView: View {
                     }
                 }
             }
-            Divider()
-            HStack {
-                Text("Mopster only contacts Apple's App Store lookup and the apps' own update feeds.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Button("Check again", action: model.check).controlSize(.small)
-            }
-            .padding(12)
+            .themePanel()
+            Text("Mopster only contacts Apple's App Store lookup and the apps' own update feeds.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 14)
         }
     }
 
-    @ViewBuilder private func summary(_ result: UpdateCheckResult) -> some View {
+    private func summary(_ result: UpdateCheckResult) -> Text {
         let count = result.updates.count + (result.system?.count ?? 0)
-        if count == 0 {
-            Text("Everything is up to date").font(.headline)
-        } else {
-            Text("\(count) updates available").font(.headline).monospacedDigit()
-        }
+        return count == 0 ? Text("Everything is up to date") : Text("\(count) updates available")
     }
 
     @ViewBuilder private func systemRows(_ system: [SystemUpdate]?) -> some View {

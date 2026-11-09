@@ -29,33 +29,9 @@ struct ContentView: View {
             .navigationSplitViewColumnWidth(min: 200, ideal: 220)
             .safeAreaInset(edge: .bottom) { accessFooter }
         } detail: {
-            switch selection {
-            case .smartSweep:
-                if let models { SmartSweepView(model: models.smartSweep) }
-            case .systemJunk:
-                if let models { SystemJunkView(model: models.systemJunk) }
-            case .protection:
-                if let models { ProtectionView(model: models.protection) }
-            case .optimization:
-                if let models { OptimizationView(model: models.optimization) }
-            case .maintenance:
-                if let models { MaintenanceView(model: models.maintenance) }
-            case .uninstaller:
-                if let models { UninstallerView(model: models.uninstaller) }
-            case .updater:
-                if let models { UpdaterView(model: models.updater) }
-            case .telescope:
-                if let models { TelescopeView(model: models.telescope) }
-            case .largeFiles:
-                if let models { LargeFilesView(model: models.largeFiles) }
-            case .duplicates:
-                if let models { DuplicatesView(model: models.duplicates) }
-            case let selection?:
-                Text(selection.title)
-                    .font(.largeTitle)
-            case nil:
-                EmptyView()
-            }
+            detail
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Theme.ground.ignoresSafeArea())
         }
         .toolbar {
             if env.isDemo {
@@ -81,12 +57,43 @@ struct ContentView: View {
         }
     }
 
+    @ViewBuilder private var detail: some View {
+        switch selection {
+        case .smartSweep:
+            if let models { SmartSweepView(model: models.smartSweep) }
+        case .systemJunk:
+            if let models { SystemJunkView(model: models.systemJunk) }
+        case .protection:
+            if let models { ProtectionView(model: models.protection) }
+        case .optimization:
+            if let models { OptimizationView(model: models.optimization) }
+        case .maintenance:
+            if let models { MaintenanceView(model: models.maintenance) }
+        case .uninstaller:
+            if let models { UninstallerView(model: models.uninstaller) }
+        case .updater:
+            if let models { UpdaterView(model: models.updater) }
+        case .telescope:
+            if let models { TelescopeView(model: models.telescope) }
+        case .largeFiles:
+            if let models { LargeFilesView(model: models.largeFiles) }
+        case .duplicates:
+            if let models { DuplicatesView(model: models.duplicates) }
+        case let selection?:
+            Text(selection.title)
+                .font(.largeTitle)
+        case nil:
+            EmptyView()
+        }
+    }
+
     private var accessFooter: some View {
         VStack(alignment: .leading, spacing: 6) {
             Divider()
             HStack {
-                Image(systemName: fullDiskAccess.isGranted ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                    .foregroundStyle(fullDiskAccess.isGranted ? .green : .orange)
+                Circle()
+                    .fill(fullDiskAccess.isGranted ? ModuleTint.junk.gradient : ModuleTint.updater.gradient)
+                    .frame(width: 8, height: 8)
                 Text(fullDiskAccess.isGranted ? "Full Disk Access: Granted" : "Full Disk Access: Not granted")
                     .font(.caption)
                 Spacer()
@@ -101,8 +108,11 @@ struct ContentView: View {
 
     private func rows(for group: SidebarGroup) -> some View {
         ForEach(group.sections) { section in
-            Label(section.title, systemImage: section.symbol)
-                .tag(section)
+            HStack(spacing: 10) {
+                ModuleIcon(symbol: section.symbol, tint: section.tint)
+                Text(section.title)
+            }
+            .tag(section)
         }
     }
 }

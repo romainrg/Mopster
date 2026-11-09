@@ -6,6 +6,7 @@ struct MaintenanceView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            ModuleHeader(.maintenance)
             ScrollView {
                 LazyVStack(spacing: 0) {
                     ForEach(model.tasks) { task in
@@ -20,22 +21,21 @@ struct MaintenanceView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 4)
             }
-            Divider()
+            .themePanel()
             footer
         }
     }
 
     private var footer: some View {
-        HStack(spacing: 12) {
+        ModuleFooter {
             Text("Administrator tasks ask for your password once.")
                 .font(.caption).foregroundStyle(.secondary)
-            Spacer()
+        } actions: {
             Button("Run selected") { Task { await model.runSelected() } }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.gradient(.maintenance))
                 .keyboardShortcut(.defaultAction)
                 .disabled(!model.canRun)
         }
-        .padding(16)
     }
 }
 

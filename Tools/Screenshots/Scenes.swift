@@ -22,6 +22,7 @@ enum ScreenshotScenes {
             }
         }
         return sections + smartSweepScenes + systemJunkScenes + protectionScenes + maintenanceScenes + uninstallerScenes + updaterScenes + telescopeScenes + largeFilesScenes + duplicatesScenes
+            + [ScreenshotScene(name: "onboarding", size: CGSize(width: 780, height: 480)) { AnyView(OnboardingView(onContinue: {})) }]
     }
 
     @MainActor
@@ -34,7 +35,8 @@ enum ScreenshotScenes {
                     $0.size >= SmartSweepViewModel.largeFileMinSize
                         && now.timeIntervalSince($0.lastAccess) >= SmartSweepViewModel.largeFileAge
                 }
-                let junk = SmartSweepViewModel.junkSummary(of: DemoJunkScanner.result().groups)
+                let junkResult = DemoJunkScanner.result()
+                let junk = SmartSweepViewModel.junkSummary(of: junkResult.groups, trashSize: junkResult.trashSize)
                 let protection = SmartSweepViewModel.protectionSummary(
                     checks: DemoSecurityChecker.checks, items: DemoLaunchItems(state: DemoLaunchState()).inspected())
                 let updates = DemoUpdateChecker.result

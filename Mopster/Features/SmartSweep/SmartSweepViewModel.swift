@@ -22,6 +22,7 @@ struct JunkSummary {
     var safeBytes: Int64
     var safeURLs: [URL]
     var reviewBytes: Int64
+    var trashBytes: Int64?
 }
 
 struct ProtectionSummary {
@@ -68,6 +69,7 @@ final class SmartSweepViewModel {
     private(set) var performance: CardState<PerformanceSummary> = .loading
     private(set) var updates: CardState<UpdatesSummary> = .loading
     private(set) var largeFiles: CardState<LargeFilesSummary> = .loading
+    private(set) var disk: VolumeCapacity?
     var confirmingRun = false
     @ObservationIgnored private let env: AppEnvironment
     @ObservationIgnored private let navigate: (SidebarSection) -> Void
@@ -78,6 +80,7 @@ final class SmartSweepViewModel {
         self.env = env
         self.phase = initialPhase
         self.navigate = navigate
+        self.disk = env.diskCapacity()
     }
 
     /// Internal entry point for screenshot scenes: cards start in the given states.
@@ -123,6 +126,7 @@ final class SmartSweepViewModel {
         performance = .loading
         updates = .loading
         largeFiles = .loading
+        disk = env.diskCapacity()
         phase = .sweeping
         task?.cancel()
         let launchItems = env.launchItems
@@ -156,7 +160,7 @@ final class SmartSweepViewModel {
         let state: CardState<JunkSummary>
         do {
             let result = try await scanner.scan(progress: { _ in })
-            state = .ready(Self.junkSummary(of: result.groups))
+            state = .ready(Self.junkSummary(of: result.groups, trashSize: result.trashSize))
         } catch {
             state = .failed
         }
@@ -164,7 +168,7 @@ final class SmartSweepViewModel {
         junk = state
     }
 
-    nonisolated static func junkSummary(of groups: [CleanupGroup]) -> JunkSummary {
+    nonisolated static func junkSummary(of groups: [CleanupGroup], trashSize: Int64? = nil) -> JunkSummary {
         let selection = Selection(defaultsFrom: groups)
         let items = groups.flatMap(\.items)
         let safe = items.filter { selection.contains($0.id) && $0.risk == .safe }
@@ -172,7 +176,7 @@ final class SmartSweepViewModel {
         let review = items.filter { !safeIDs.contains($0.id) }
         return JunkSummary(
             safeBytes: safe.reduce(0) { $0 + $1.size }, safeURLs: safe.map(\.url),
-            reviewBytes: review.reduce(0) { $0 + $1.size })
+            reviewBytes: review.reduce(0) { $0 + $1.size }, trashBytes: trashSize)
     }
 
     private func sweepProtection(_ current: Int, items: Task<[InspectedLaunchItem], Never>) async {

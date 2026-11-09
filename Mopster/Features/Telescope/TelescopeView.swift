@@ -8,16 +8,17 @@ struct TelescopeView: View {
         switch model.flow.phase {
         case .intro:
             VStack(spacing: 0) {
-                header(canRescan: false)
-                Divider()
+                pathRow
+                    .padding(.horizontal, 24)
+                    .padding(.top, 18)
                 FeatureIntro(
-                    symbol: "scope", title: "Telescope",
+                symbol: "scope", tint: .telescope, title: "Telescope",
                     promise: "See what takes up your disk space.",
                     scope: "Scans a folder or volume and draws a map you can dive into. Nothing is changed until you move items to the Trash.",
                     action: model.scan)
             }
         case .scanning(let progress):
-            FeatureScanning(progress: progress, cancel: model.flow.cancel)
+            FeatureScanning(progress: progress, tint: .telescope, cancel: model.flow.cancel)
         case .results:
             map
         case .removing:
@@ -29,51 +30,55 @@ struct TelescopeView: View {
                 map
             }
         case .failed(let message):
-            VStack(spacing: 14) {
-                Image(systemName: "exclamationmark.triangle").font(.system(size: 48)).foregroundStyle(.orange)
-                Text("The scan failed").font(.title2.bold())
-                Text(message).foregroundStyle(.secondary)
-                Button("Retry", action: model.scan).buttonStyle(.borderedProminent)
-            }
-            .padding(32)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            FeatureFailed(message: message, retry: model.scan)
         }
     }
 
-    private func header(canRescan: Bool) -> some View {
+    private var rootPath: String {
+        (model.displayedRoot.path as NSString).abbreviatingWithTildeInPath
+    }
+
+    private var pathRow: some View {
         HStack(spacing: 10) {
             Image(systemName: "externaldrive").foregroundStyle(.secondary)
-            Text(verbatim: (model.displayedRoot.path as NSString).abbreviatingWithTildeInPath)
+            Text(verbatim: rootPath)
                 .font(.callout.monospaced())
                 .lineLimit(1).truncationMode(.middle)
-            Button("Choose…", action: model.choose).controlSize(.small)
+            Button("Choose…", action: model.choose).buttonStyle(.soft).controlSize(.small)
             Spacer(minLength: 8)
+        }
+    }
+
+    private var header: some View {
+        ModuleHeader(.telescope, subtitle: Text(verbatim: rootPath)) {
             if !model.skipped.isEmpty {
                 Label("Some folders couldn't be read.", systemImage: "exclamationmark.triangle")
                     .font(.caption).foregroundStyle(.secondary).lineLimit(1)
                     .help(model.skipped.prefix(20).map(\.path).joined(separator: "\n"))
             }
-            if canRescan { Button("Rescan", action: model.scan).controlSize(.small) }
+            Button("Choose…", action: model.choose).buttonStyle(.soft)
+            Button("Rescan", action: model.scan).buttonStyle(.soft)
         }
-        .padding(.horizontal, 12).padding(.vertical, 8)
     }
 
     private var map: some View {
         let items = model.items
         return VStack(spacing: 0) {
-            header(canRescan: true)
-            Divider()
+            header
             breadcrumb
-            HStack(spacing: 0) {
+            HStack(spacing: 14) {
                 TreemapView(
                     items: items, selection: model.selection, hoveredID: $model.hoveredID, onTap: tap,
                     onIgnore: model.ignore
                 )
                 .padding(10)
-                Divider()
-                sideList(items).frame(width: 320)
+                .themeCard()
+                sideList(items)
+                    .scrollContentBackground(.hidden)
+                    .themeCard()
+                    .frame(width: 320)
             }
-            Divider()
+            .padding(.horizontal, 24)
             footer
         }
         .confirmationDialog(confirmationTitle, isPresented: $model.confirmingRemoval, titleVisibility: .visible) {
@@ -110,7 +115,7 @@ struct TelescopeView: View {
             Spacer(minLength: 8)
             Text(verbatim: Formatting.bytes(model.currentSize)).font(.callout).foregroundStyle(.secondary).monospacedDigit()
         }
-        .padding(.horizontal, 12).padding(.vertical, 6)
+        .padding(.horizontal, 24).padding(.bottom, 10)
     }
 
     private func sideList(_ items: [TelescopeItem]) -> some View {
@@ -126,19 +131,18 @@ struct TelescopeView: View {
     }
 
     private var footer: some View {
-        HStack {
+        ModuleFooter {
             if model.selectedNodes.isEmpty {
                 Text("Nothing selected").foregroundStyle(.secondary)
             } else {
                 Text("\(Formatting.bytes(model.selectedSize)) selected").monospacedDigit()
             }
-            Spacer()
-            Button("Reveal in Finder", action: model.reveal).disabled(model.selectedNodes.isEmpty)
+        } actions: {
+            Button("Reveal in Finder", action: model.reveal).buttonStyle(.soft).disabled(model.selectedNodes.isEmpty)
             Button("Move to Trash", action: model.requestRemoval)
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.gradient)
                 .disabled(model.selectedNodes.isEmpty)
         }
-        .padding(12)
     }
 }
 

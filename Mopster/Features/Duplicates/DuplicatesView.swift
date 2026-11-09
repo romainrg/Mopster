@@ -13,7 +13,7 @@ struct DuplicatesView: View {
         case .intro:
             setup
         case .scanning(let progress):
-            FeatureScanning(progress: progress, cancel: model.flow.cancel)
+            FeatureScanning(progress: progress, tint: .duplicates, cancel: model.flow.cancel)
         case .results:
             results
         case .removing:
@@ -21,14 +21,7 @@ struct DuplicatesView: View {
         case .done(let report):
             FeatureDone(report: report, onDone: model.flow.reset)
         case .failed(let message):
-            VStack(spacing: 14) {
-                Image(systemName: "exclamationmark.triangle").font(.system(size: 48)).foregroundStyle(.orange)
-                Text("The scan failed").font(.title2.bold())
-                Text(message).foregroundStyle(.secondary)
-                Button("Retry", action: model.start).buttonStyle(.borderedProminent)
-            }
-            .padding(32)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            FeatureFailed(message: message, retry: model.start)
         }
     }
 
@@ -36,7 +29,8 @@ struct DuplicatesView: View {
 
     private var setup: some View {
         VStack(spacing: 14) {
-            Image(systemName: "square.on.square").font(.system(size: 56)).foregroundStyle(.tint)
+            ModuleIcon(symbol: "square.on.square", tint: .duplicates, size: 84)
+                .shadow(color: ModuleTint.duplicates.end.opacity(0.35), radius: 18, y: 10)
             Text("Duplicates").font(.largeTitle.bold())
             Text("Find identical files and keep one copy.").font(.title3)
             Text("Compares file contents in the folders below. Nothing is changed until you move copies to the Trash.")
@@ -48,7 +42,9 @@ struct DuplicatesView: View {
                             .tag(folder.path)
                     }
                 }
+                .scrollContentBackground(.hidden)
                 .frame(height: 130)
+                .themeCard()
                 .overlay {
                     if model.folders.isEmpty {
                         Text("Add a folder to scan.").foregroundStyle(.secondary)
@@ -70,8 +66,7 @@ struct DuplicatesView: View {
             }
             .frame(maxWidth: 480)
             Button("Scan", action: model.start)
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                .buttonStyle(.gradient)
                 .keyboardShortcut(.defaultAction)
                 .disabled(model.folders.isEmpty)
                 .padding(.top, 8)
@@ -95,11 +90,12 @@ struct DuplicatesView: View {
     private var results: some View {
         VStack(spacing: 0) {
             toolbar
-            Divider()
             if model.groups.isEmpty {
                 Text("No duplicates found.")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .themeCard()
+                    .padding(.horizontal, 24)
             } else {
                 List {
                     ForEach(model.groups) { group in
@@ -115,14 +111,14 @@ struct DuplicatesView: View {
                         }
                     }
                 }
+                .themePanel()
             }
             if model.skippedCloudOnly > 0 {
                 Text("\(model.skippedCloudOnly) cloud-only files skipped")
                     .font(.callout).foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 12).padding(.vertical, 6)
+                    .padding(.horizontal, 24).padding(.top, 10)
             }
-            Divider()
             footer
         }
         .confirmationDialog(confirmationTitle, isPresented: $model.confirmingRemoval, titleVisibility: .visible) {
@@ -140,15 +136,13 @@ struct DuplicatesView: View {
     }
 
     private var toolbar: some View {
-        HStack(spacing: 12) {
-            Text("\(model.groups.count) groups, \(Formatting.bytes(model.totalWasted)) wasted")
-                .font(.callout).foregroundStyle(.secondary).monospacedDigit()
-            Spacer(minLength: 8)
-            Button("Change folders", action: model.changeFolders)
-            Button("Clear", action: model.clearSelection).disabled(model.selection.isEmpty)
-            Button("Auto-select", action: model.autoSelect)
+        ModuleHeader(
+            .duplicates, subtitle: Text("\(model.groups.count) groups, \(Formatting.bytes(model.totalWasted)) wasted")
+        ) {
+            Button("Change folders", action: model.changeFolders).buttonStyle(.soft)
+            Button("Clear", action: model.clearSelection).buttonStyle(.soft).disabled(model.selection.isEmpty)
+            Button("Auto-select", action: model.autoSelect).buttonStyle(.soft)
         }
-        .padding(12)
     }
 
     private func header(_ group: DuplicateGroup) -> some View {
@@ -195,18 +189,17 @@ struct DuplicatesView: View {
     // MARK: Footer
 
     private var footer: some View {
-        HStack {
+        ModuleFooter {
             if model.selection.isEmpty {
                 Text("Nothing selected").foregroundStyle(.secondary)
             } else {
                 Text("\(Formatting.bytes(model.selectedSize)) selected").monospacedDigit()
             }
-            Spacer()
+        } actions: {
             Button("Move to Trash", action: model.requestRemoval)
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.gradient)
                 .disabled(model.selection.isEmpty)
         }
-        .padding(12)
     }
 }
 

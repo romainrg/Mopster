@@ -46,6 +46,7 @@ enum DemoData {
 
     static let junkSkipped = ["Library/Mail/V10/MailData/Attachments"]
     static let junkTrashSize: Int64 = 1_350_000_000
+    static let diskCapacity = VolumeCapacity(total: 494_000_000_000, available: 82_000_000_000)
 
     static var sizes: [String: Int64] {
         Dictionary(

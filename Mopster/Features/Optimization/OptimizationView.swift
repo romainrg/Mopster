@@ -8,7 +8,6 @@ struct OptimizationView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
-            Divider()
             List {
                 Section {
                     ForEach(model.topProcesses) { process in
@@ -42,6 +41,8 @@ struct OptimizationView: View {
                     .padding(.top, 6)
                 }
             }
+            .themePanel()
+            .padding(.bottom, 24)
         }
         .onAppear { model.start() }
         .onDisappear { model.stop() }
@@ -82,27 +83,28 @@ struct OptimizationView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 32) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Memory pressure").font(.caption).foregroundStyle(.secondary)
-                HStack(spacing: 6) {
-                    Circle().fill(pressureColor).frame(width: 10, height: 10)
-                    Text(pressureText).font(.title3.weight(.semibold))
+        ModuleHeader(.optimization) {
+            HStack(spacing: 28) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Memory pressure").font(.caption).foregroundStyle(.secondary)
+                    HStack(spacing: 6) {
+                        Circle().fill(pressureColor).frame(width: 10, height: 10)
+                        Text(pressureText).font(.title3.weight(.semibold))
+                    }
+                }
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("CPU load").font(.caption).foregroundStyle(.secondary)
+                    HStack(spacing: 8) {
+                        Text(model.load.cpuLoad, format: .percent.precision(.fractionLength(0)))
+                            .font(.title3.weight(.semibold)).monospacedDigit()
+                        ProgressView(value: min(max(model.load.cpuLoad, 0), 1))
+                            .tint(ModuleTint.optimization.end)
+                            .frame(width: 120)
+                    }
                 }
             }
-            VStack(alignment: .leading, spacing: 4) {
-                Text("CPU load").font(.caption).foregroundStyle(.secondary)
-                HStack(spacing: 8) {
-                    Text(model.load.cpuLoad, format: .percent.precision(.fractionLength(0)))
-                        .font(.title3.weight(.semibold)).monospacedDigit()
-                    ProgressView(value: min(max(model.load.cpuLoad, 0), 1))
-                        .frame(width: 120)
-                }
-            }
-            Spacer()
+            .accessibilityElement(children: .combine)
         }
-        .accessibilityElement(children: .combine)
-        .padding(16)
     }
 
     private var pressureText: LocalizedStringKey {
@@ -113,10 +115,10 @@ struct OptimizationView: View {
         }
     }
 
-    private var pressureColor: Color {
+    private var pressureColor: LinearGradient {
         switch model.load.memoryPressure {
-        case .normal: .green
-        case .warning, .critical: .orange
+        case .normal: ModuleTint.junk.gradient
+        case .warning, .critical: ModuleTint.updater.gradient
         }
     }
 

@@ -30,6 +30,7 @@ struct AppEnvironment {
     var terminateApp: @MainActor (String) -> Void
     var updates: any UpdateChecking
     var systemUpdates: @Sendable () async -> [SystemUpdate]?
+    var diskCapacity: @Sendable () -> VolumeCapacity?
     var openURL: @MainActor (URL) -> Void
     var openApp: @MainActor (URL) -> Void
 
@@ -68,6 +69,7 @@ struct AppEnvironment {
             },
             updates: UpdateChecker(http: URLSessionHTTPClient()),
             systemUpdates: UpdateChecker.softwareUpdateList,
+            diskCapacity: { VolumeCapacity.of(home) },
             openURL: { _ = NSWorkspace.shared.open($0) },
             openApp: { NSWorkspace.shared.openApplication(at: $0, configuration: NSWorkspace.OpenConfiguration()) })
     }
@@ -100,6 +102,7 @@ struct AppEnvironment {
             terminateApp: { _ in },
             updates: DemoUpdateChecker(),
             systemUpdates: { DemoUpdateChecker.systemUpdates },
+            diskCapacity: { DemoData.diskCapacity },
             openURL: { _ in },
             openApp: { _ in })
     }

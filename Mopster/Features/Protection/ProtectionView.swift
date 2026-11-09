@@ -10,14 +10,7 @@ struct ProtectionView: View {
             case .results, .removing, .done:
                 results
             case .failed(let message):
-                VStack(spacing: 14) {
-                    Image(systemName: "exclamationmark.triangle").font(.system(size: 48)).foregroundStyle(.orange)
-                    Text("The scan failed").font(.title2.bold())
-                    Text(message).foregroundStyle(.secondary)
-                    Button("Retry", action: model.refresh).buttonStyle(.borderedProminent)
-                }
-                .padding(32)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                FeatureFailed(message: message, retry: model.refresh)
             case .intro, .scanning:
                 ProgressView("Checking…").frame(maxWidth: .infinity, maxHeight: .infinity)
             }
@@ -29,18 +22,13 @@ struct ProtectionView: View {
 
     private var results: some View {
         VStack(spacing: 0) {
-            HStack {
-                if model.itemsToReview == 0 {
-                    Text("Nothing to review").font(.headline)
-                } else {
-                    Text("\(model.itemsToReview) items to review").font(.headline).monospacedDigit()
-                }
-                Spacer()
-                Button("Refresh", action: model.refresh)
-                    .controlSize(.small)
+            ModuleHeader(
+                .protection,
+                subtitle: model.itemsToReview == 0
+                    ? Text("Nothing to review") : Text("\(model.itemsToReview) items to review")
+            ) {
+                Button("Refresh", action: model.refresh).buttonStyle(.soft)
             }
-            .padding([.horizontal, .top], 12)
-            .padding(.bottom, 8)
             List {
                 Section("Security checklist") {
                     ForEach(model.checks) { check in
@@ -63,14 +51,15 @@ struct ProtectionView: View {
                     }
                 }
             }
-            Divider()
+            .themePanel()
             Text(
                 "Mopster is not an antivirus. macOS's built-in XProtect checks apps against known malware signatures."
             )
             .font(.caption)
             .foregroundStyle(.secondary)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(12)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 14)
         }
         .confirmationDialog(
             dialogTitle, isPresented: Binding(get: { model.pending != nil }, set: { if !$0 { model.pending = nil } }),

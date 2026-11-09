@@ -8,12 +8,12 @@ struct UninstallerView: View {
         switch model.flow.phase {
         case .intro:
             FeatureIntro(
-                symbol: "xmark.app", title: "Uninstaller",
+                symbol: "xmark.app", tint: .uninstaller, title: "Uninstaller",
                 promise: "Remove apps together with everything they leave behind.",
                 scope: "Lists the apps in /Applications and ~/Applications, then looks for their files in your Library folders.",
                 action: model.start)
         case .scanning(let progress):
-            FeatureScanning(progress: progress, cancel: model.flow.cancel)
+            FeatureScanning(progress: progress, tint: .uninstaller, cancel: model.flow.cancel)
         case .results:
             results
         case .removing:
@@ -21,28 +21,21 @@ struct UninstallerView: View {
         case .done(let report):
             FeatureDone(report: report, onDone: model.finish)
         case .failed(let message):
-            VStack(spacing: 14) {
-                Image(systemName: "exclamationmark.triangle").font(.system(size: 48)).foregroundStyle(.orange)
-                Text("The scan failed").font(.title2.bold())
-                Text(message).foregroundStyle(.secondary)
-                Button("Retry", action: model.start).buttonStyle(.borderedProminent)
-            }
-            .padding(32)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            FeatureFailed(message: message, retry: model.start)
         }
     }
 
     private var results: some View {
         VStack(spacing: 0) {
-            Picker("View", selection: $model.tab) {
-                Text("Applications").tag(UninstallerViewModel.Tab.applications)
-                Text("Leftovers").tag(UninstallerViewModel.Tab.leftovers)
+            ModuleHeader(.uninstaller) {
+                Picker("View", selection: $model.tab) {
+                    Text("Applications").tag(UninstallerViewModel.Tab.applications)
+                    Text("Leftovers").tag(UninstallerViewModel.Tab.leftovers)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .frame(maxWidth: 320)
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .frame(maxWidth: 320)
-            .padding(12)
-            Divider()
             switch model.tab {
             case .applications: ApplicationsTab(model: model)
             case .leftovers: LeftoversTab(model: model)
@@ -83,10 +76,10 @@ private struct ApplicationsTab: View {
     @Bindable var model: UninstallerViewModel
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 14) {
             appList
-                .frame(minWidth: 340, idealWidth: 400, maxWidth: 440)
-            Divider()
+                .frame(minWidth: 300, idealWidth: 360, maxWidth: 420)
+                .themeCard()
             Group {
                 if let app = model.selectedApp {
                     AppDetail(model: model, app: app)
@@ -96,8 +89,11 @@ private struct ApplicationsTab: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .themeCard()
         }
+        .padding(.horizontal, 24)
+        .padding(.bottom, 24)
     }
 
     private var appList: some View {
@@ -123,6 +119,7 @@ private struct ApplicationsTab: View {
                         .selectionDisabled(app.isLocked)
                 }
             }
+            .scrollContentBackground(.hidden)
         }
     }
 }
@@ -184,6 +181,7 @@ private struct AppDetail: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             CleanupList(groups: model.leftovers, selection: $model.leftoverSelection)
+                .scrollContentBackground(.hidden)
         }
     }
 
@@ -193,10 +191,11 @@ private struct AppDetail: View {
                 .monospacedDigit()
             Spacer()
             Button("Reset") { model.request(.reset) }
+                .buttonStyle(.soft)
                 .disabled(!model.canReset)
                 .help("Move only the selected leftovers to the Trash and keep the app.")
             Button("Uninstall") { model.request(.uninstall) }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.gradient)
                 .disabled(!model.canAct)
                 .help("Move the app and the selected leftovers to the Trash.")
         }
@@ -210,7 +209,7 @@ private struct LeftoversTab: View {
     var body: some View {
         if model.orphans.isEmpty {
             VStack(spacing: 10) {
-                Image(systemName: "checkmark.circle").font(.system(size: 44)).foregroundStyle(.green)
+                ModuleIcon(symbol: "checkmark", tint: .junk, size: 56)
                 Text("No leftovers found").font(.title3.bold())
                 Text("Every app folder in your Library belongs to an installed app.").foregroundStyle(.secondary)
             }
@@ -223,8 +222,8 @@ private struct LeftoversTab: View {
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding([.horizontal, .top], 12)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 12)
                 CleanupResultsView(
                     groups: model.orphans, selection: $model.orphanSelection,
                     onRemove: { model.request(.removeOrphans) }, showsNotes: true)

@@ -11,12 +11,12 @@ struct LargeFilesView: View {
         switch model.flow.phase {
         case .intro:
             FeatureIntro(
-                symbol: "doc.text.magnifyingglass", title: "Large & Old Files",
+                symbol: "doc.text.magnifyingglass", tint: .largeFiles, title: "Large & Old Files",
                 promise: "Find the big files you forgot about.",
                 scope: "Scans your home folder for large files, then filters them by size, age and kind. Nothing is changed until you move files to the Trash.",
                 action: model.start)
         case .scanning(let progress):
-            FeatureScanning(progress: progress, cancel: model.flow.cancel)
+            FeatureScanning(progress: progress, tint: .largeFiles, cancel: model.flow.cancel)
         case .results:
             results
         case .removing:
@@ -24,30 +24,27 @@ struct LargeFilesView: View {
         case .done(let report):
             FeatureDone(report: report, onDone: model.flow.reset)
         case .failed(let message):
-            VStack(spacing: 14) {
-                Image(systemName: "exclamationmark.triangle").font(.system(size: 48)).foregroundStyle(.orange)
-                Text("The scan failed").font(.title2.bold())
-                Text(message).foregroundStyle(.secondary)
-                Button("Retry", action: model.start).buttonStyle(.borderedProminent)
-            }
-            .padding(32)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            FeatureFailed(message: message, retry: model.start)
         }
     }
 
     private var results: some View {
         let files = model.visible
+        let total = files.reduce(0) { $0 + $1.size }
         return VStack(spacing: 0) {
-            filterBar(count: files.count, total: files.reduce(0) { $0 + $1.size })
-            Divider()
+            ModuleHeader(.largeFiles, subtitle: Text("\(files.count) files, \(Formatting.bytes(total))"))
+            filterBar
             if files.isEmpty {
                 Text("No files match these filters.")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .themeCard()
+                    .padding(.horizontal, 24)
             } else {
                 table(files)
+                    .alternatingRowBackgrounds(.disabled)
+                    .themePanel()
             }
-            Divider()
             footer
         }
         .confirmationDialog(confirmationTitle, isPresented: $model.confirmingRemoval, titleVisibility: .visible) {
@@ -69,7 +66,7 @@ struct LargeFilesView: View {
 
     // MARK: Filters
 
-    private func filterBar(count: Int, total: Int64) -> some View {
+    private var filterBar: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 16) {
                 Picker("Larger than", selection: $model.minSize) {
@@ -97,12 +94,10 @@ struct LargeFilesView: View {
                     .toggleStyle(.button)
                     .controlSize(.small)
                 }
-                Spacer(minLength: 8)
-                Text("\(count) files, \(Formatting.bytes(total))")
-                    .font(.callout).foregroundStyle(.secondary).monospacedDigit()
             }
         }
-        .padding(12)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 12)
     }
 
     // MARK: Table
@@ -123,12 +118,12 @@ struct LargeFilesView: View {
                     Text(verbatim: file.url.lastPathComponent).lineLimit(1).truncationMode(.middle)
                 }
             }
-            .width(min: 160, ideal: 240)
+            .width(min: 160, ideal: 220)
             TableColumn("Folder") { file in
                 Text(verbatim: model.folder(of: file))
                     .foregroundStyle(.secondary).lineLimit(1).truncationMode(.head)
             }
-            .width(min: 120, ideal: 200)
+            .width(min: 120, ideal: 160)
             TableColumn("Kind") { file in Text(file.kind.title).foregroundStyle(.secondary) }
                 .width(min: 70, ideal: 90)
             TableColumn("Last opened", value: \.lastAccess) { file in
@@ -163,19 +158,18 @@ struct LargeFilesView: View {
     // MARK: Footer
 
     private var footer: some View {
-        HStack {
+        ModuleFooter {
             if model.selectedFiles.isEmpty {
                 Text("Nothing selected").foregroundStyle(.secondary)
             } else {
                 Text("\(Formatting.bytes(model.selectedSize)) selected").monospacedDigit()
             }
-            Spacer()
-            Button("Reveal in Finder", action: model.reveal).disabled(model.selectedFiles.isEmpty)
+        } actions: {
+            Button("Reveal in Finder", action: model.reveal).buttonStyle(.soft).disabled(model.selectedFiles.isEmpty)
             Button("Move to Trash", action: model.requestRemoval)
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.gradient)
                 .disabled(model.selectedFiles.isEmpty)
         }
-        .padding(12)
     }
 }
 

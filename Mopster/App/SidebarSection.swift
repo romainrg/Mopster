@@ -53,6 +53,21 @@ enum SidebarSection: String, CaseIterable, Identifiable {
         }
     }
 
+    var tint: ModuleTint {
+        switch self {
+        case .smartSweep: .sweep
+        case .systemJunk: .junk
+        case .protection: .protection
+        case .optimization: .optimization
+        case .maintenance: .maintenance
+        case .uninstaller: .uninstaller
+        case .updater: .updater
+        case .telescope: .telescope
+        case .largeFiles: .largeFiles
+        case .duplicates: .duplicates
+        }
+    }
+
     var symbol: String {
         switch self {
         case .smartSweep: "sparkles"

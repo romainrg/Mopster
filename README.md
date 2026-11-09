@@ -36,7 +36,7 @@ Everything Mopster removes goes to the Trash, after a safety check, and only wha
 
 ## Features
 
-- **Smart Sweep**: runs the quick scans of every module at once and shows one card per area (junk, protection, performance, app updates, large and old files). The junk card shows the count and size of the safe junk. *Run* moves exactly those pre-selected safe items to the Trash after a confirmation that shows the total; *Review* opens System Junk to see each item. Every other card has a *Review* button that opens its module.
+- **Smart Sweep**: runs the quick scans of every module at once, sums them up in a health score from 0 to 100 next to the disk's used space, memory pressure and the Trash size, and shows one card per area (junk, protection, performance, app updates, large and old files). The junk card shows the count and size of the safe junk. *Run* moves exactly those pre-selected safe items to the Trash after a confirmation that shows the total; *Review* opens System Junk to see each item. Every other card has a *Review* button that opens its module.
 - **System Junk**: caches, logs, crash reports, Xcode and developer caches, Mail downloads, saved application state, installers left in Downloads, device backups. Safe items are pre-selected, items that need a look are not.
 - **Protection**: a checklist (System Integrity Protection, Gatekeeper, FileVault, firewall, XProtect, automatic security updates) with a shortcut to the right System Settings pane, plus an inspection of launch agents and daemons: code signature, missing programs, odd locations. Flags mean "have a look", never "malware".
 - **Optimization**: top processes by CPU and memory, memory pressure and CPU load, Quit and Force Quit for your own processes, and background items you can disable or enable.
@@ -171,6 +171,7 @@ Details are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ## Defaults worth knowing
 
 - Smart Sweep's large and old files card counts files of **50 MB or more that have not been opened for a year or more**.
+- Smart Sweep's health score starts at 100 and each finding costs a few points, capped per area: safe junk over 1 GB, security settings that are off, flagged background items, memory pressure, broken background items, pending updates and a startup disk over 80% full. An area that couldn't be checked costs nothing; 75 and above reads as good shape.
 - "Last opened" relies on file access dates. Backups or indexing can refresh them, so Mopster may under-report old files.
 - Thinning Time Machine local snapshots is left out on purpose: it deletes permanently, outside the Trash, and could remove your only recent backup.
 
